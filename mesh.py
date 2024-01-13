@@ -78,10 +78,6 @@ class Mesh():
 
     def next(self, c):
         return (c//3)*3 + 1
-    
-    def normal(self, t):
-        n = np.cross(self.V[self.T[t][1]]-self.V[self.T[t][0]], self.V[self.T[t][2]]-self.V[self.T[t][0]])
-        return n / np.linalg.norm(n)
 
     def opposite(self, c):
         return self.opp[c]
