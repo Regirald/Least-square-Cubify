@@ -13,18 +13,18 @@ print(nboundary, m.ncorners, m.nverts, np.max(fault_opposite), np.count_nonzero(
 
 
 for dim in range(2): # solve for x first, then for y
-    A = scipy.sparse.lil_matrix((m.ncorners*3 , m.nverts))
+    A = scipy.sparse.lil_matrix((m.ncorners*4 , m.nverts))
     b = [0]*A.shape[0]
 
-    
-    L= [[0, 0, i] for i in range(np.max(horizon_id)+1)]
-    for row in range(m.ncorners):
-        if horizon_id[row]!=-1:
-            L[horizon_id[row]][0]+=1
-            L[horizon_id[row]][1]+= (m.V[m.dst(row)][dim]+m.V[m.org(row)][dim])/2
+    if dim==1:
+        L= [[0, 0, i] for i in range(np.max(horizon_id)+1)]
+        for row in range(m.ncorners):
+            if horizon_id[row]!=-1:
+                L[horizon_id[row]][0]+=1
+                L[horizon_id[row]][dim]+= (m.V[m.dst(row)][dim]+m.V[m.org(row)][dim])/2
 
-    Mean_horizon=[L[i][1]/L[i][0] for i in range(len(L))]
-    print(Mean_horizon)
+        Mean_horizon=[L[i][1]/L[i][0] for i in range(len(L))]
+        print(Mean_horizon)
 
 
     for row in range(m.ncorners):
@@ -35,9 +35,9 @@ for dim in range(2): # solve for x first, then for y
         b[row] = m.V[j][dim]-m.V[i][dim]
 
         if horizon_id[row]!=-1 and dim==1:  # flatten the right dimension of each half-edge
-            A[row+m.ncorners, i] = 1
-            A[row+m.ncorners, j] = 1
-            b[row+m.ncorners] = 2*Mean_horizon[horizon_id[row]]
+            A[row+m.ncorners, i] = 1*100
+            A[row+m.ncorners, j] = 1*100
+            b[row+m.ncorners] = 2*Mean_horizon[horizon_id[row]]*100
         
         if is_fault[row]:
             row2=fault_opposite[row]
@@ -77,8 +77,8 @@ for dim in range(2): # solve for x first, then for y
 
     #     if m.on_border(i) :
             
-    #         A[i+m.ncorners*2, i] = 1*100 # quadratic penalty to lock boundary vertices
-    #         b[i+m.ncorners*2] = v[dim] *100
+    #         A[i+m.ncorners*3, i] = 1 # quadratic penalty to lock boundary vertices
+    #         b[i+m.ncorners*3] = v[dim] 
 
     # print(np.sort(l))
 
